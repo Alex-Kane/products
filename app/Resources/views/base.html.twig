@@ -3,10 +3,56 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+                  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+                  crossorigin="anonymous">
+            <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+                    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+                    crossorigin="anonymous">
+            </script> -->
+        {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+        {% block navbar %}
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="{{ path('main_page') }}">Product shop</a>
+                    </div>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <li><a href="#">{{ app.user.username }}</a></li>
+                            <li><a href="{{ path('product_create') }}">Create new product</a></li>
+                            <li><a href="{{ path('logout') }}">Log out</a></li>
+                        {% else %}
+                            <li><a href="{{ path('login') }}">Log in</a></li>
+                            <li><a href="{{ path('signup') }}">Sign up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        {% endblock %}
+
+        {% block flashmessages %}
+            {% for type, messages in app.session.flashBag.all %}
+                {% for message in messages %}
+                    <div class="row">
+                        {% if type == 'notice' %}
+                            <div class="col-md-6 col-md-offset-3 alert alert-info">
+                        {% elseif type == 'warning' %}
+                            <div class="col-md-6 col-md-offset-3 alert alert-warning">
+                        {% elseif type == 'error' %}
+                            <div class="col-md-6 col-md-offset-3 alert alert-danger">
+                        {% endif %}
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>

@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products{% endblock %}
+
+{% block body %}
+	{{ include('products/list.html.twig', { 'products': products }) }}
+{% endblock %}

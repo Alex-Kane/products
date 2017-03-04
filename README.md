@@ -1,4 +1,5 @@
-product_shop
-============
-
-A Symfony project created on February 27, 2017, 7:54 pm.
+Products
+========
+This is the CRUD-application for product items.
+Only logged in users can work with products.
+If you don't have account, you should sign up.

@@ -1,0 +1,41 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-7 col-md-offset-3">
+			<h1>Products</h1>
+			{% for product in products %}
+				<div class="row product">
+					<div class="row">
+						<h3 class="col-md-12">{{ product.name }}</h3>
+					</div>
+					<div class="row">
+						<img 
+							 {% if product.picture is not null %}
+							 	src="{{ asset('/bundles/AppBundle/uploads/products/pictures/') }}{{ product.picture }}"
+							 {% else %}
+							 	src="{{ asset('/images/default/products/picture/default.png') }}"
+							 {% endif %}
+							 alt="Product image"
+						     width="120px"
+						     height="120px">
+					</div>
+					<div class="row">
+						<p class="col-md-12" style="word-break: break-all;">
+							{{ product.description }}
+						</p>
+					</div>
+					{% if app.user and app.user.id == product.user.id %}
+						<div class="row">
+							<a href="{{ path('product_edit', {id: product.id}) }}"
+							   class="col-md-12 text-right">Edit product</a>
+						</div>
+
+						<div class="row">
+							<a href="{{ path('product_delete', {id: product.id}) }}?_csrf_token={{ csrf_token('product_delete') }}"
+							   class="col-md-12 text-right">Delete product</a>
+						</div>
+					{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
