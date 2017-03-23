@@ -13,22 +13,29 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        main:
-            pattern: ^/
-            anonymous: ~
-            provider: db_provider
+        login:
+            pattern:  ^/api/login
+            stateless: true
+            anonymous: true
             form_login:
-                login_path: login
-                check_path: login
-                csrf_token_generator: security.csrf.token_manager
-            logout:
-                path: /logout
-                target: /
+                check_path:               /api/login_check
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+                require_previous_session: false
+
+        api:
+            pattern:   ^/api
+            stateless: true
+            anonymous: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
     access_control:
-        - { path: ^/login$, allow_if: 'not has_role("ROLE_USER")' }
-        - { path: ^/signup$, allow_if: 'not has_role("ROLE_USER")' }
-        - { path: ^/product, role: ROLE_USER}
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/users, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/products, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
     encoders:
         AppBundle\Entity\User:

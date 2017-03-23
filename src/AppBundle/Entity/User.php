@@ -7,6 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\Type;
 
 /**
  * User
@@ -17,6 +20,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @UniqueEntity(fields="username", message="Username is already taken")
  * @UniqueEntity(fields="email", message="Email is already taken")
+ *
+ * @ExclusionPolicy("none")
  */
 class User implements UserInterface, \Serializable
 {
@@ -57,29 +62,32 @@ class User implements UserInterface, \Serializable
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
-     */
-    private $password;
-
-    /**
-     * @var string
+     *
      * @Assert\Length(
      *      min=3,
      *      max=4096,
      *      minMessage="Password is too short (Required at least {{ limit }} characters)",
      *      maxMessage="Password is too long (Limit: {{ limit }} characters)"
      * )
+     * @Assert\NotBlank(message="Please, set password")
+     *
+     * @Exclude()
      */
-    private $plainPassword;
+    private $password;
 
     /**
      * @var string
+     *
+     * @Exclude
      */
-    private $confirmPlainPassword;
+    private $confirmPassword;
 
     /**
      * @var string
      *
      * @ORM\Column(name="firstname", type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Please, set your firstname")
      */
     private $firstname;
 
@@ -87,6 +95,8 @@ class User implements UserInterface, \Serializable
      * @var string
      *
      * @ORM\Column(name="lastname", type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Please, set your lastname")
      */
     private $lastname;
 
@@ -99,6 +109,8 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\OneToMany(targetEntity="Product", mappedBy="user")
+     *
+     * @Exclude()
      */
     private $products;
 
@@ -114,7 +126,7 @@ class User implements UserInterface, \Serializable
      */
     public function isPasswordConfirmed()
     {
-        return $this->getPlainPassword() == $this->getConfirmPlainPassword();
+        return $this->getPassword() == $this->getConfirmPassword();
     }
 
     /**
@@ -345,48 +357,25 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * Set plainPassword
+     * Set confirmPassword
      *
-     * @param string $plainPassword
+     * @param string $confirmPassword
      * @return User
      */
-    public function setPlainPassword($plainPassword)
+    public function setConfirmPassword($confirmPassword)
     {
-        $this->plainPassword = $plainPassword;
+        $this->confirmPassword = $confirmPassword;
 
         return $this;
     }
 
     /**
-     * Get plainPassword
+     * Get confirmPassword
      *
      * @return string 
      */
-    public function getPlainPassword()
+    public function getConfirmPassword()
     {
-        return $this->plainPassword;
-    }
-
-    /**
-     * Set confirmPlainPassword
-     *
-     * @param string $confirmPlainPassword
-     * @return User
-     */
-    public function setConfirmPlainPassword($confirmPlainPassword)
-    {
-        $this->confirmPlainPassword = $confirmPlainPassword;
-
-        return $this;
-    }
-
-    /**
-     * Get confirmPlainPassword
-     *
-     * @return string 
-     */
-    public function getConfirmPlainPassword()
-    {
-        return $this->confirmPlainPassword;
+        return $this->confirmPassword;
     }
 }
