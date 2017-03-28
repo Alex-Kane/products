@@ -10,6 +10,7 @@ use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Delete;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -43,11 +44,11 @@ class ProductController extends FOSRestController implements ClassResourceInterf
 	 * Update product
 	 *
 	 * @Put("/products/{id}")
+	 * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
 	 */
 	public function putAction(Product $product, Request $request)
 	{
-		if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')
-			|| $this->getUser()->getId() != $product->getUser()->getId()) {
+		if ($this->getUser()->getId() != $product->getUser()->getId()) {
 			throw $this->createAccessDeniedException();
 		}
 		$product->setName($request->get('name'))
@@ -66,14 +67,11 @@ class ProductController extends FOSRestController implements ClassResourceInterf
 	 *
 	 * @Post("/products")
 	 * @ParamConverter("product", converter="fos_rest.request_body")
+	 * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
 	 */
-	public function postAction(Product $product, ConstraintViolationListInterface $validationErrors)
+	public function postAction(Product $product, ConstraintViolationListInterface $validationErrors, Request $request)
 	{
-		if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-			throw $this->createAccessDeniedException();
-		}
 		$product->setUser($this->getUser());
-
 		if (count($validationErrors) > 0) {
 			return $this->view(['errors' => $validationErrors], 400);
 		}
@@ -90,11 +88,11 @@ class ProductController extends FOSRestController implements ClassResourceInterf
 	 * Delete product
 	 *
 	 * @Delete("/products/{id}")
+	 * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
 	 */
 	public function deleteAction(Product $product)
 	{
-		if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')
-			|| $this->getUser()->getId() != $product->getUser()->getId()) {
+		if ($this->getUser()->getId() != $product->getUser()->getId()) {
 			throw $this->createAccessDeniedException();
 		}
 		$em = $this->getDoctrine()->getManager();
