@@ -13,6 +13,8 @@ class PictureUploadListener
 
 	protected $_targetDir;
 
+	const DEFAULT_PICTURE_PATH = 'images/default/products/picture/default.png';
+
 	public function __construct(FileManager $fileManager, $targetDir)
 	{
 		$this->_fileManager = $fileManager;
@@ -39,10 +41,11 @@ class PictureUploadListener
 	{
 		$picture = $product->getPicture();
 		if (!$picture instanceof UploadedFile) {
-			$product->setPicture(null);
+			$product->setPicture(self::DEFAULT_PICTURE_PATH);
 			return;
 		}
 		$newFileName = $this->_fileManager->upload($picture, $this->_targetDir);
-		$product->setPicture($newFileName);
+		$webPath = substr($this->_targetDir, strpos($this->_targetDir, 'web/') + 4);
+		$product->setPicture($webPath . '/' . $newFileName);
 	}
 }

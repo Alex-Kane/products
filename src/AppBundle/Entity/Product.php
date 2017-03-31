@@ -5,7 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
-use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\ReadOnly;
 
 /**
  * Product
@@ -52,11 +52,11 @@ class Product
      * @ORM\Column(name="picture", type="string", length=255, nullable=true)
      *
      * @Assert\Image(
-     *      mimeTypes={"image/jpeg", "image/png"},
+     *      mimeTypes={"image/jpeg", "image/png", "image/gif"},
      *      mimeTypesMessage="This type is not valid"
      * )
      *
-     * @Exclude()
+     * @ReadOnly()
      */
     private $picture;
 
