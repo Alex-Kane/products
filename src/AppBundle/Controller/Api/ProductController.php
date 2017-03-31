@@ -11,7 +11,6 @@ use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Delete;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use AppBundle\Entity\Product;
@@ -52,7 +51,8 @@ class ProductController extends FOSRestController implements ClassResourceInterf
 			throw $this->createAccessDeniedException();
 		}
 		$product->setName($request->get('name'))
-		        ->setDescription($request->get('description'));
+		        ->setDescription($request->get('description'))
+		        ->setPicture($request->files->get('picture'));
 		$validationErrors = $this->get('validator')->validate($product);
 		if (count($validationErrors) > 0) {
 			return $this->view(['errors' => $validationErrors], 400);
@@ -66,12 +66,16 @@ class ProductController extends FOSRestController implements ClassResourceInterf
 	 * Create new product
 	 *
 	 * @Post("/products")
-	 * @ParamConverter("product", converter="fos_rest.request_body")
 	 * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
 	 */
-	public function postAction(Product $product, ConstraintViolationListInterface $validationErrors, Request $request)
+	public function postAction(Request $request)
 	{
-		$product->setUser($this->getUser());
+		$product = new Product();
+		$product->setName($request->get('name'))
+		        ->setDescription($request->get('description'))
+		        ->setPicture($request->files->get('picture'))
+		        ->setUser($this->getUser());
+		$validationErrors = $this->get('validator')->validate($product);
 		if (count($validationErrors) > 0) {
 			return $this->view(['errors' => $validationErrors], 400);
 		}

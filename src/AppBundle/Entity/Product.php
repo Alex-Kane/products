@@ -52,7 +52,7 @@ class Product
      * @ORM\Column(name="picture", type="string", length=255, nullable=true)
      *
      * @Assert\Image(
-     *      mimeTypes={"image/jpeg", "image/png"},
+     *      mimeTypes={"image/jpeg", "image/png", "image/gif"},
      *      mimeTypesMessage="This type is not valid"
      * )
      *

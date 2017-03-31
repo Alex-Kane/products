@@ -9,7 +9,6 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\User;
 
@@ -30,18 +29,21 @@ class UserController extends FOSRestController implements ClassResourceInterface
 	 * Create new user
 	 *
 	 * @Post("/users")
-	 * @ParamConverter("user", converter="fos_rest.request_body")
 	 */
-	public function postAction(User $user, Request $request)
+	public function postAction(Request $request)
 	{
-		$user->setPassword($request->get('password'))
+		$user = new User();
+		$user->setUsername($request->get('username'))
+			 ->setFirstname($request->get('firstname'))
+			 ->setLastname($request->get('lastname'))
+			 ->setEmail($request->get('email'))
+			 ->setPassword($request->get('password'))
 			 ->setConfirmPassword($request->get('confirm_password'));
 		$validationErrors = $this->get('validator')->validate($user);
 		if (!count($validationErrors)) {
 			$entityManager = $this->getDoctrine()->getManager();
 			$entityManager->persist($user);
 			$entityManager->flush();
-
 			return $this->view(null, 201);
 		}
 		return $this->view(['errors' => $validationErrors], 400);		

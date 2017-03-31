@@ -27,15 +27,15 @@ fos_rest:
         view_response_listener:
             enabled: true
     body_converter:
-        enabled: true
-        validate: true
+        enabled: false
     body_listener:
         enabled: true
         default_format: 'json'
     format_listener:
         enabled: true
         rules:
-            - { path: '^/api',  priorities: ['json'], fallback_format: 'json', prefer_extension: true }
+            - { path: '^/api/images', priorities: ['gif'], fallback_format: 'html', prefer_extension: true }
+            - { path: '^/api',  priorities: ['json', 'multipart/form-data'], fallback_format: 'json', prefer_extension: true }
             - { path: '^/', priorities: ['html', '*/*'], fallback_format: 'html', prefer_extension: true }
     serializer:
         serialize_null: true
@@ -64,6 +64,9 @@ framework:
         handler_id:  ~
     fragments:       ~
     http_method_override: true
+    request:
+        formats:
+            gif: 'image/gif'
 
 # Twig Configuration
 twig:
