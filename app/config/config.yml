@@ -63,6 +63,9 @@ framework:
         handler_id:  ~
     fragments:       ~
     http_method_override: true
+    request:
+        formats:
+            gif: 'image/gif'
 
 # Twig Configuration
 twig:
